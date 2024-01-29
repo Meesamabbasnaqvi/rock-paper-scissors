@@ -357,7 +357,7 @@ main {
   .winner-border-1 {
     border-top-left-radius: 0;
     position: absolute;
-    bottom: 350px;
+    bottom: 360px;
     left: -60px;
   }
 
@@ -400,7 +400,7 @@ main {
 
   .house-winner-border-1 {
     position: absolute;
-    bottom: 360px;
+    bottom: 370px;
     right: -60px;
   }
 
