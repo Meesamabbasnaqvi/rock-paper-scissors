@@ -1,38 +1,419 @@
-.App {
-  text-align: center;
+body {
+  color: #fff;
+  background: linear-gradient(hsl(214, 47%, 23%), hsl(237, 49%, 15%));
+  width: 100vw;
+  height: 100vh;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.d-flex {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-container {
+  display: flex;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
 }
 
-.App-link {
-  color: #61dafb;
+header {
+  border: 5px solid hsl(217, 16%, 45%);
+  width: 60%;
+  text-align: start;
+  padding: 5px 20px;
+  border-radius: 15px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+h3 {
+  text-transform: uppercase;
+  font-family: 'Barlow Semi Condensed', sans-serif;
+  font-weight: 600;
+}
+
+h2 {}
+
+.score {
+  background-color: #fff;
+  text-align: center;
+  padding: 5px 30px;
+  border-radius: 10px;
+}
+
+.score h3 {
+  color: hsl(229, 25%, 31%);
+}
+
+.score span {
+  color: hsl(229, 64%, 46%);
+}
+main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+.rock-image {
+  background: linear-gradient(hsl(349, 71%, 52%), hsl(349, 70%, 56%));
+  box-shadow: 0px 5px hsl(349, 66%, 41%);
+  margin-top: 40px;
+}
+
+.d-none {
+  display: none;
+}
+
+.image {
+  border-radius: 50%;
+  height: 120px;
+  width: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.paper-image {
+  background: linear-gradient(hsl(230, 89%, 62%), hsl(230, 89%, 65%));
+  box-shadow: 0px 5px hsl(238, 89%, 41%);
+}
+
+.scissor-image {
+  background: linear-gradient(hsl(39, 89%, 49%), hsl(40, 84%, 53%));
+  box-shadow: 0px 5px hsl(39, 89%, 41%);
+}
+
+#rock {
+  margin-left: 100px;
+}
+
+.image img {
+  background: #fff;
+  border-radius: 50%;
+  padding: 20px 25px;
+}
+
+.rock-image img {
+  padding: 23px;
+}
+
+.images-container {
+  margin-top: -20px;
+}
+
+.home-screen {
+  width: 320px;
+  margin-top: 60px;
+  background-image: url("./images/bg-triangle.svg");
+}
+
+.rules-btn {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  border: 1px solid hsl(217, 16%, 45%);
+  background: none;
+  color: #fff;
+  padding: 5px 40px;
+  border-radius: 10px;
+  text-transform: uppercase;
+}
+
+.modal-container {
+  background-color: rgba(0, 0, 0, 0.211);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100vw;
+  position: absolute;
+  top: -100%;
+  transition: 1s;
+  -webkit-user-select: none;
+}
+
+.modal {
+  background-color: #fff;
+  text-align: start;
+  padding: 0px 20px;
+}
+
+.transform {
+  top: 0;
+}
+
+.d-none {
+  display: none;
+}
+
+.game-play p {
+  text-transform: uppercase;
+  color: #fff;
+  margin: 0;
+}
+
+.game-play {
+  margin-top: 40px;
+}
+
+.game-play .image {
+  margin-top: 20px;
+  height: 150px;
+  width: 150px;
+}
+
+.game-play .image img {
+  height: 70px;
+}
+
+#play-btn {
+  border: 1px solid hsl(217, 16%, 45%);
+  color: hsl(217, 16%, 45%);
+  background-color: #fff;
+  padding: 5px 40px;
+  border-radius: 10px;
+  text-transform: uppercase;
+}
+
+.winner-play-div {
+  display: flex;
+  flex-direction: column;
+  margin: 0 50px 0 50px;
+  z-index: 9999;
+}
+
+.start-mode {
+  flex-direction: column;
+}
+
+.start-mode .image {
+  margin-top: 0;
+}
+
+.home-choice {
+  z-index: 000;
+}
+
+.start-mode p {
+  margin-bottom: 20px;
+}
+
+.house-choice {
+  margin-top: 20px;
+  background: hsl(237, 49%, 15%);
+  height: 150px;
+  width: 150px;
+  border-radius: 100%;
+}
+
+.house-winner-border-1 .house-winner-border-3 {
+  border-radius: 100%;
+  border: 30px solid rgba(255, 255, 255, 0.126);
+
+}
+
+.house-winner-border-1 .house-winner-border-2 {
+  border-radius: 100%;
+  border: 30px solid rgba(255, 255, 255, 0.068);
+}
+
+.house-winner-border-1 .house-winner-border-3 .image {
+  margin-top: 0;
+}
+
+.house-winner-border-1 {
+  border: 30px solid rgba(255, 255, 255, 0.041);
+  margin-top: -70px;
+  border-radius: 100%;
+  position: absolute;
+  bottom: 0px;
+  right: 110px;
+}
+
+.winner-with-para {
+  position: absolute;
+  top: 190px;
+  right: 180px;
+}
+
+.house-play-div {
+  margin: 0 220px 0 60px;
+  display: flex;
+  flex-direction: column;
+}
+
+.you-play-div {
+  margin: 0 50px 0 200px;
+  display: flex;
+  flex-direction: column;
+}
+
+.winner-border-1 {
+  border: 30px solid rgba(255, 255, 255, 0.041);
+  margin-top: -80px;
+  border-radius: 100%;
+  position: absolute;
+  left: 110px;
+  bottom: 0;
+}
+
+.you-win-with-para {
+  position: absolute;
+  top: 190px;
+  left: 220px;
+}
+
+.winner-border-1 .winner-border-3 {
+  border-radius: 100%;
+  border: 30px solid rgba(255, 255, 255, 0.126);
+
+}
+
+.winner-border-1 .winner-border-2 {
+  border-radius: 100%;
+  border: 30px solid rgba(255, 255, 255, 0.068);
+}
+
+.winner-border-1 .winner-border-3 .image {
+  margin-top: 0;
+}
+
+@media (max-width: 768px) {
+  h3 {
+    font-size: 12px;
   }
-  to {
-    transform: rotate(360deg);
+  .score {
+    padding: 5px 10px;
+  }
+
+  .score span {
+    font-size: 12px;
+    margin-top: -5px;
+  }
+
+  .score h3 {
+    font-size: 19px;
+    margin-top: 5px;
+  }
+
+  .home-screen {
+    height: 90%;
+    background-size: contain;
+    margin-left: 10px;
+    background-repeat: no-repeat;
+    margin-top: 80px;
+
+  }
+
+  .images-container {
+    margin-top: -40px;
+    margin-left: -20px;
+    padding: 20px;
+  }
+
+  #rock {
+    margin-left: 90px;
+  }
+
+  .start-mode {
+    flex-direction: column;
+    margin-left: 15px;
+    margin-right: 50px;
+  }
+
+  .start-mode .image {
+    height: 90px;
+    width: 90px;
+    padding: 25px 20px;
+  }
+
+  .home-choice .image {
+    height: 90px;
+    width: 90px;
+    padding: 20px;
+  }
+
+  .winner-play-div {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+  }
+
+  .winner-play-div h1 {
+    font-size: 42px;
+    color: #fff;
+  }
+
+  .modal-container {
+    top: -100vh;
+    z-index: 9999999;
+  }
+  .rules-btn {
+    z-index: 9999999909;
+    bottom: 40px;
+  }
+  .transform {
+    top: 0vh;
+  }
+  .winner-border-1 {
+    border-top-left-radius: 0;
+    position: absolute;
+    bottom: 360px;
+    left: -60px;
+  }
+
+  .opponent-lose {
+    position: absolute;
+    margin-top: 20px;
+    right: 40px;
+  }
+
+  .you-play-div {
+    margin: 0 30px 0 0px;
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    bottom: 80px;
+    right: 10px;
+    left: 60px;
+  }
+
+  .winner-play-div {
+    position: absolute;
+    bottom: 80px;
+  }
+
+  .you-win-with-para {
+    position: absolute;
+    left: 40px;
+    top: 130px;
+  }
+
+  .opponent-lose-para {
+    position: absolute;
+    right: 30px;
+  }
+
+  .opponent-win {
+    position: absolute;
+    left: 30px;
+  }
+
+  .house-winner-border-1 {
+    position: absolute;
+    bottom: 360px;
+    right: -60px;
+  }
+
+  .winner-with-para {
+    position: absolute;
+    right: 20px;
+    top: 135px;
+  }
+
+  .house-play-div {
+    position: absolute;
+    right: -460px;
+    width: 200px;
+    bottom: 100px;
   }
 }
