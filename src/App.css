@@ -357,7 +357,7 @@ main {
   .winner-border-1 {
     border-top-left-radius: 0;
     position: absolute;
-    bottom: 360px;
+    bottom: 430px;
     left: -60px;
   }
 
@@ -392,18 +392,15 @@ main {
     position: absolute;
     right: 30px;
   }
-
   .opponent-win {
     position: absolute;
     left: 30px;
   }
-
   .house-winner-border-1 {
     position: absolute;
-    bottom: 380px;
+    bottom: 435px;
     right: -60px;
   }
-
   .winner-with-para {
     position: absolute;
     right: 20px;
