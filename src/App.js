@@ -1,153 +1,292 @@
-import { createElement, useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 
+const BEATS = {
+  rock: ["scissors", "lizard"],
+  paper: ["rock", "spock"],
+  scissors: ["paper", "lizard"],
+  lizard: ["spock", "paper"],
+  spock: ["scissors", "rock"],
+};
+
+const CHOICES = {
+  scissors: { name: "scissors", icon: "/images/icon-scissors.svg", class: "scissors" },
+  spock: { name: "spock", icon: "/images/icon-spock.svg", class: "spock" },
+  paper: { name: "paper", icon: "/images/icon-paper.svg", class: "paper" },
+  lizard: { name: "lizard", icon: "/images/icon-lizard.svg", class: "lizard" },
+  rock: { name: "rock", icon: "/images/icon-rock.svg", class: "rock" },
+};
+
+const CLASSIC_CHOICES = ["paper", "scissors", "rock"];
+const BONUS_CHOICES = ["scissors", "spock", "paper", "lizard", "rock"];
+
 function App() {
-  const [modal, setModal] = useState(true);
-  const [blankPad, setBlankPad] = useState(true);
-  const [game, setGame] = useState(true);
-  const [youPicked, setYouPicked] = useState(4)
-  const [score, setScore] = useState(0)
-  const [result, setResult] = useState("")
-  const [houseChoice, setHouseChoice] = useState([])
-  const [houseWin, setHouseWin] = useState(true)
-  const [youWin, setYouWin] = useState(true)
-  let computerChoices = [
-    <div className="image paper-image">
-      <img src="./images/icon-paper.svg" alt="" />
-    </div>,
-    <div className="image scissor-image">
-      <img src="./images/icon-scissors.svg" alt="" />
-    </div>,
-    <div className="image rock-image">
-      <img src="./images/icon-rock.svg" alt="" />
-    </div>
-  ];
-  const viewRule = () => {
-    setModal(!modal);
-  };
-  const userChoice = (e) => {
-    setYouPicked(e)
-    setGame(false)
-    let randomChoices = Math.floor(Math.random() * computerChoices.length);
-    setHouseChoice(computerChoices[randomChoices])
+  const [gameMode, setGameMode] = useState(() => {
+    return localStorage.getItem("gameMode") || "classic";
+  });
+
+  const [scoreClassic, setScoreClassic] = useState(() => {
+    const saved = localStorage.getItem("scoreClassic");
+    return saved ? parseInt(saved, 10) : 0;
+  });
+
+  const [scoreBonus, setScoreBonus] = useState(() => {
+    const saved = localStorage.getItem("scoreBonus");
+    return saved ? parseInt(saved, 10) : 0;
+  });
+
+  const [gameState, setGameState] = useState("selection"); // 'selection' | 'playing'
+  const [userPick, setUserPick] = useState(null);
+  const [housePick, setHousePick] = useState(null);
+  const [result, setResult] = useState(""); // 'win' | 'lose' | 'draw' | ''
+  const [showRules, setShowRules] = useState(false);
+  const [houseRevealed, setHouseRevealed] = useState(false);
+
+  // Sync state to local storage
+  useEffect(() => {
+    localStorage.setItem("gameMode", gameMode);
+  }, [gameMode]);
+
+  useEffect(() => {
+    localStorage.setItem("scoreClassic", scoreClassic);
+  }, [scoreClassic]);
+
+  useEffect(() => {
+    localStorage.setItem("scoreBonus", scoreBonus);
+  }, [scoreBonus]);
+
+  const activeChoices = gameMode === "classic" ? CLASSIC_CHOICES : BONUS_CHOICES;
+  const currentScore = gameMode === "classic" ? scoreClassic : scoreBonus;
+
+  const handleUserPick = (pick) => {
+    setGameState("playing");
+    setUserPick(pick);
+    setHousePick(null);
+    setHouseRevealed(false);
+    setResult("");
+
+    // Simulate computer picking with delay
     setTimeout(() => {
-      if (e === 1 && randomChoices === 0 || e === 2 && randomChoices === 1 || e === 0 && randomChoices === 2) {
-        setScore(score + 1)
-        setResult("You Win")
-        setYouWin(false)
-        setTimeout(() => {
-        }, 500);
-      } else if (e === 0 && randomChoices === 1 || e === 1 && randomChoices === 2 || e === 2 && randomChoices === 0) {
-        setHouseWin(false)
-        setResult("You Lose !")
-        if (score > 0) {
-          setScore(score - 1)
+      const randomIndex = Math.floor(Math.random() * activeChoices.length);
+      const computerChoice = activeChoices[randomIndex];
+      setHousePick(computerChoice);
+
+      setTimeout(() => {
+        setHouseRevealed(true);
+        if (pick === computerChoice) {
+          setResult("draw");
+        } else if (BEATS[pick].includes(computerChoice)) {
+          setResult("win");
+          if (gameMode === "classic") {
+            setScoreClassic((prev) => prev + 1);
+          } else {
+            setScoreBonus((prev) => prev + 1);
+          }
+        } else {
+          setResult("lose");
+          if (gameMode === "classic") {
+            setScoreClassic((prev) => (prev > 0 ? prev - 1 : 0));
+          } else {
+            setScoreBonus((prev) => (prev > 0 ? prev - 1 : 0));
+          }
         }
-      } else {
-        setResult("Draw !")
-      }
-    }, 1500)
-    setTimeout(() => {
-      setBlankPad(false)
+      }, 500);
     }, 1000);
-  }
-  const playAgain = () => {
-    setGame(true)
-    setYouPicked(0)
-    setYouWin(true)
-    setHouseWin(true)
-    setResult("")
-    setHouseChoice([])
-    setBlankPad(true)
-  }
+  };
+
+  const handlePlayAgain = () => {
+    setGameState("selection");
+    setUserPick(null);
+    setHousePick(null);
+    setHouseRevealed(false);
+    setResult("");
+  };
+
+  const handleModeChange = (mode) => {
+    setGameMode(mode);
+    setGameState("selection");
+    setUserPick(null);
+    setHousePick(null);
+    setHouseRevealed(false);
+    setResult("");
+  };
+
+  const handleResetScore = () => {
+    if (gameMode === "classic") {
+      setScoreClassic(0);
+    } else {
+      setScoreBonus(0);
+    }
+  };
+
+  const toggleRules = () => {
+    setShowRules((prev) => !prev);
+  };
+
   return (
     <div className="App">
-      <div className={modal ? "modal-container" : "modal-container transform"}>
-        <div className="modal">
-          <h2>RULES</h2>
-          <img src="./images/image-rules.svg" alt="" />
-        </div>
-      </div>
+      {/* Header Area */}
       <div className="header-container">
-        <header className="d-flex">
-          <div>
-            <h3>
-              Rock <br /> Paper <br /> Scissors
-            </h3>
+        <header>
+          <div className="logo-box">
+            {gameMode === "classic" ? (
+              <img src={`${process.env.PUBLIC_URL}/images/logo.svg`} alt="Rock Paper Scissors Logo" className="logo-img" />
+            ) : (
+              <img src={`${process.env.PUBLIC_URL}/images/logo-bonus.svg`} alt="Rock Paper Scissors Lizard Spock Logo" className="logo-img-bonus" />
+            )}
           </div>
-          <div className="score">
-            <span>SCORE</span>
-            <h3>
-              {score}
-            </h3>
+          <div className="score-box">
+            <span className="score-label">SCORE</span>
+            <span className="score-number">{currentScore}</span>
           </div>
         </header>
       </div>
-      <main>
-        <div className={game ? "home-screen" : "d-none"}>
-          <div className="d-flex images-container">
 
-            <div onClick={() => userChoice(0)} className="image paper-image">
-              <img src="./images/icon-paper.svg" alt="" />
+      {/* Main Game Screen */}
+      <main>
+        {gameState === "selection" ? (
+          <div className={`gameboard-wrapper ${gameMode}`}>
+            <div className="gameboard-bg">
+              {gameMode === "classic" ? (
+                <img src={`${process.env.PUBLIC_URL}/images/bg-triangle.svg`} alt="" className="bg-svg" />
+              ) : (
+                <img src={`${process.env.PUBLIC_URL}/images/bg-pentagon.svg`} alt="" className="bg-svg" />
+              )}
             </div>
-            <div onClick={() => userChoice(1)} className="image scissor-image">
-              <img src="./images/icon-scissors.svg" alt="" />
-            </div>
+
+            {activeChoices.map((choice) => {
+              const info = CHOICES[choice];
+              return (
+                <button
+                  key={choice}
+                  className={`token-btn ${info.class}`}
+                  onClick={() => handleUserPick(choice)}
+                  aria-label={`Pick ${choice}`}
+                >
+                  <div className="token-inner">
+                    <img src={`${process.env.PUBLIC_URL}${info.icon}`} alt="" />
+                  </div>
+                </button>
+              );
+            })}
           </div>
-          <div id="rock" onClick={() => userChoice(2)} className="image rock-image">
-            <img src="./images/icon-rock.svg" alt="" />
-          </div>
-        </div>
-        <button className="rules-btn" onClick={viewRule}>Rules</button>
-        <div className={game ? "d-none" : "d-flex game-play"}>
-          <div className="start-mode d-flex">
-            <div className={houseWin ? "" : "opponent-win"}>
-            <div className={houseWin ? "" : "opponent-win-para"}>
-              <p className={youWin ? "" : "you-win-with-para"}>You Picked</p>
-            </div>
-              <div className={youWin ? "" : "winner-border-1"}>
-                <div className="winner-border-2">
-                  <div className="winner-border-3">
-                    <div className={youPicked === 0 ? "image paper-image" : "d-none"}>
-                      <img src="./images/icon-paper.svg" alt="" />
-                    </div>
-                    <div className={youPicked === 1 ? "image scissor-image" : "d-none"}>
-                      <img src="./images/icon-scissors.svg" alt="" />
-                    </div>
-                    <div className={youPicked === 2 ? "image rock-image" : "d-none"}>
-                      <img src="./images/icon-rock.svg" alt="" />
-                    </div>
+        ) : (
+          <div className="gameplay-container">
+            <div className={`player-pick-column ${result === "win" && houseRevealed ? "winner-glow" : ""}`}>
+              <span className="pick-title">YOU PICKED</span>
+              <div className={`token-placeholder`}>
+                <div className={`token-btn static ${CHOICES[userPick].class}`}>
+                  <div className="token-inner">
+                    <img src={`${process.env.PUBLIC_URL}${CHOICES[userPick].icon}`} alt="" />
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div className={youWin ? "winner-play-div d-flex" : "d-flex you-play-div"}>
-            <div className={houseWin ? "winner-play-div d-flex" : "d-flex house-play-div"}>
-              <h1 id="win-lose">{result}</h1>
-              <button className="play-btn" id="play-btn" onClick={playAgain}>Play Again</button>
-            </div>
-          </div>
-          <div className={game ? "d-none home-choice" : "home-choice"}>
-            <div className={youWin ? "" : "opponent-lose-para"}>
-              <p className={houseWin ? "" : "winner-with-para"}>THe House Picked</p>
-            </div>
-            <div className={blankPad ? "house-choice" : ``}></div>
-            {blankPad ? `` :
-              <div className={youWin ? "" : "opponent-lose"}>
-                <div className={houseWin ? "" : "house-winner-border-1"} >
-                  <div className="house-winner-border-2">
-                    <div className="house-winner-border-3">
-                      {houseChoice}</div>
-                  </div>
-                </div>
+
+            {houseRevealed && (
+              <div className="result-middle-column desktop-only">
+                <span className="result-text">
+                  {result === "win" && "YOU WIN"}
+                  {result === "lose" && "YOU LOSE"}
+                  {result === "draw" && "DRAW"}
+                </span>
+                <button className="play-again-btn" onClick={handlePlayAgain}>
+                  PLAY AGAIN
+                </button>
               </div>
-            }
+            )}
+
+            <div className={`player-pick-column ${result === "lose" && houseRevealed ? "winner-glow" : ""}`}>
+              <span className="pick-title">THE HOUSE PICKED</span>
+              <div className="token-placeholder">
+                {housePick ? (
+                  <div
+                    className={`token-btn static ${CHOICES[housePick].class} ${
+                      houseRevealed ? "reveal" : "hidden"
+                    }`}
+                  >
+                    <div className="token-inner">
+                      <img src={`${process.env.PUBLIC_URL}${CHOICES[housePick].icon}`} alt="" />
+                    </div>
+                  </div>
+                ) : (
+                  <div className="empty-placeholder-glow" />
+                )}
+              </div>
+            </div>
+
+            {houseRevealed && (
+              <div className="result-middle-column mobile-only">
+                <span className="result-text">
+                  {result === "win" && "YOU WIN"}
+                  {result === "lose" && "YOU LOSE"}
+                  {result === "draw" && "DRAW"}
+                </span>
+                <button className="play-again-btn" onClick={handlePlayAgain}>
+                  PLAY AGAIN
+                </button>
+              </div>
+            )}
           </div>
-        </div>
+        )}
       </main>
+
+      {/* Footer Area with Buttons */}
+      <footer className="footer-actions">
+        <div className="footer-left">
+          <div className="mode-toggle">
+            <button
+              className={`mode-btn ${gameMode === "classic" ? "active" : ""}`}
+              onClick={() => handleModeChange("classic")}
+            >
+              Classic
+            </button>
+            <button
+              className={`mode-btn ${gameMode === "bonus" ? "active" : ""}`}
+              onClick={() => handleModeChange("bonus")}
+            >
+              Bonus
+            </button>
+          </div>
+        </div>
+        <div className="footer-right">
+          {currentScore > 0 && (
+            <button className="reset-btn" onClick={handleResetScore}>
+              Reset Score
+            </button>
+          )}
+          <button className="rules-btn" onClick={toggleRules}>
+            Rules
+          </button>
+        </div>
+      </footer>
+
+      {/* Rules Modal */}
+      {showRules && (
+        <div className="modal-overlay" onClick={toggleRules}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>RULES</h2>
+              <button className="close-btn-desktop" onClick={toggleRules} aria-label="Close rules">
+                <img src={`${process.env.PUBLIC_URL}/images/icon-close.svg`} alt="" />
+              </button>
+            </div>
+            <div className="modal-body">
+              {gameMode === "classic" ? (
+                <img src={`${process.env.PUBLIC_URL}/images/image-rules.svg`} alt="Classic Rules" className="rules-img" />
+              ) : (
+                <img src={`${process.env.PUBLIC_URL}/images/image-rules-bonus.svg`} alt="Bonus Rules" className="rules-img" />
+              )}
+            </div>
+            <button className="close-btn-mobile" onClick={toggleRules} aria-label="Close rules">
+              <img src={`${process.env.PUBLIC_URL}/images/icon-close.svg`} alt="" />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
 export default App;
+
